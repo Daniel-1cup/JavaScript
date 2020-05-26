@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>jQuery</title>
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<script src="./jquery.cookie.min.js"></script>
+
+</head>
+	<body>
+		<div class="list">库存<span class="stock"></span></div>
+		<div class="list">库存<span class="stock"></span></div>
+		<div class="list">库存<span class="stock"></span></div>
+		<div class="list">库存<span class="stock"></span></div>
+		<div class="list">库存<span class="stock"></span></div>
+	</body>
+</html>
+<script>
+$(function(){
+	var list = $(".list")
+	$.each(list,function(k,v){
+		var key =  'sales_'+k
+		var sales = localStorageGet(key);
+		console.log(sales)
+		if(!sales) {
+			sales = createSales(100,500,key,1)
+		}
+		$(v).find(".stock").text(sales)
+	})
+})
+
+
+function createSales(min,max,key,expire) {
+	var sales = parseInt(Math.random()*(max-min+1)+min,10); 
+	localStorageSet(key, sales, expire);
+	return sales;
+}
+function localStorageSet (name, data, expire){
+   var  expire = new Date().getTime() + expire * 60 * 60 * 1000
+  const obj = {
+    data,
+    expire
+  };
+  localStorage.setItem(name, JSON.stringify(obj));
+ }
+ 
+function localStorageGet(name) {
+  const storage = localStorage.getItem(name);
+  const time = new Date().getTime();
+
+  let result = '';
+  if (storage) {
+    const obj = JSON.parse(storage);
+    if (time < obj.expire) {
+      result = obj.data;
+    } else {
+      localStorage.removeItem(name);
+    }
+  }
+  return result;
+};
+
+</script>
